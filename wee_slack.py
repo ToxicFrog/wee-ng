@@ -1950,9 +1950,13 @@ def process_message(message_json, eventrouter, store=True, **kwargs):
         text = message.render()
         dbg(text)
 
-        # special case with actions.
+        # Handle legacy actions (ordinary messages bracketed in _).
         if text.startswith("_") and text.endswith("_"):
             text = text[1:-1]
+            subtype = 'me_message'
+
+        # Handle actions (/me).
+        if subtype == 'me_message':
             if message.sender != channel.team.nick:
                 text = message.sender + " " + text
             try:
